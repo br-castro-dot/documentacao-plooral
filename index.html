@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Studion Sescoop - Documentação Base para Plooral</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    
+   <style>
+        :root {
+            /* Cores oficiais do Guia Pocket DOT 2024 */
+            --dot-green: #768900;       /* Maçã Verde */
+            --dot-black: #0C0A08;       /* Preto Esfumado */
+            --dot-white: #FDFDFD;       /* Fumaça Branca */
+            --sidebar-bg: #4A4A4A;
+            --sidebar-text: #FDFDFD;
+            --text-color: #0C0A08;
+            --code-bg: #1A1A1A;
+            --code-text: #FDFDFD;
+            --border-color: #E2E2E2;
+            --method-get: #0C0A08;      /* GET em Preto conforme minimalismo do guia */
+            --method-post: #768900;     /* POST em Verde DOT */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Lato', sans-serif; /* Tipografia oficial */
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            background-color: var(--dot-white);
+            color: var(--text-color);
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 300px;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            border-right: 4px solid var(--dot-green); /* Detalhe em verde */
+        }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(253, 253, 253, 0.1);
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 15px 0;
+        }
+
+        .nav-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            font-weight: 300; /* Lato Light */
+            font-size: 0.95rem;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(118, 137, 0, 0.15);
+            font-weight: 400; /* Lato Regular */
+            color: var(--dot-green);
+        }
+
+        .nav-item.active {
+            border-left: 5px solid var(--dot-green);
+        }
+
+        .method-badge {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 3px;
+            margin-right: 12px;
+            color: white;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .method-badge.get { background-color: var(--method-get); }
+        .method-badge.post { background-color: var(--method-post); }
+        .method-badge.info { background-color: var(--dot-green); }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 50px 60px;
+            overflow-y: auto;
+            background-color: var(--dot-white);
+        }
+
+        .section {
+            display: none;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 { margin-bottom: 15px; font-size: 2.4rem; color: var(--dot-black); font-weight: 700; border-bottom: 2px solid var(--dot-green);}
+        h2 { margin: 40px 0 20px; font-size: 1.6rem; color: var(--dot-green); font-weight: 400; }
+        h3 { margin: 25px 0 15px; font-size: 1.2rem; font-weight: 700; }
+        p { line-height: 1.7; margin-bottom: 15px; color: #444; font-weight: 400; }
+
+        .endpoint-url {
+            display: flex;
+            align-items: center;
+            background-color: #F0F0F0;
+            padding: 18px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 1rem;
+            margin-bottom: 25px;
+            border-left: 5px solid var(--dot-black);
+        }
+
+        .endpoint-url .method-badge { font-size: 0.8rem; margin-right: 15px; }
+
+        .server-url-box {
+            background-color: #F0F0F0;
+            padding: 15px 20px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: var(--dot-black);
+            border-left: 5px solid var(--dot-green);
+            margin: 15px 0 25px 0;
+            font-weight: 700;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th { background-color: #F8F8F8; color: var(--dot-black); font-weight: 700; font-size: 0.9rem; text-transform: uppercase; }
+        
+        .required { color: #d9534f; font-weight: bold;}
+
+        pre {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 25px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin-bottom: 25px;
+            border: 1px solid #333;
+        }
+
+        code { font-family: 'Courier New', Courier, monospace; }
+
+        /* Boxes de Mensagem no Estilo DOT */
+        .alert-box {
+            background-color: #f4f4f4;
+            border-left: 4px solid var(--dot-black);
+            padding: 20px;
+            margin-bottom: 25px;
+            color: var(--dot-black);
+        }
+
+        .warning-box {
+            background-color: rgba(118, 137, 0, 0.05);
+            border-left: 4px solid var(--dot-green);
+            padding: 20px;
+            margin-bottom: 25px;
+            color: #4a5600;
+        }
+
+        .success-box {
+            background-color: #eef5e9;
+            border-left: 4px solid #4CAF50;
+            padding: 20px;
+            margin-bottom: 25px;
+            color: #2e7d32;
+        }
+
+        ul { margin-bottom: 20px; padding-left: 20px; line-height: 1.8; }
+        li { margin-bottom: 8px; }
+
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            API Studion.mx <br>
+            <span style="font-size: 0.7rem; font-weight: 500; color: var(--dot-green);">DOT Digital Group</span>
+        </div>
+        <ul class="nav-list" id="navList">
+            <li class="nav-item active" onclick="showSection('intro')">
+                <span class="method-badge info">INFO</span> Introdução
+            </li>
+            <li class="nav-item" onclick="showSection('auth')">
+                <span class="method-badge post">POST</span> Autenticação
+            </li>
+            <li class="nav-item" onclick="showSection('user-info')">
+                <span class="method-badge get">GET</span> Info do Usuário
+            </li>
+            <li class="nav-item" onclick="showSection('path-info')">
+                <span class="method-badge get">GET</span> Info da Trilha
+            </li>
+            <li class="nav-item" onclick="showSection('enrollment')">
+                <span class="method-badge post">POST</span> Matrícula na Trilha
+            </li>
+            <li class="nav-item" onclick="showSection('list-enrollments')">
+                <span class="method-badge get">GET</span> Listar Matrículas
+            </li>
+            <li class="nav-item" onclick="showSection('certificate-download')">
+                <span class="method-badge get">GET</span> Download Certificado
+            </li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        
+        <div id="intro" class="section active">
+            <h1>Visão Geral da Integração</h1>
+            <p>Seja bem-vindo à documentação base de integração entre as plataformas <strong>Plooral</strong> e <strong>Studion.mx</strong> desenvolvido pela <strong>DOT Digital Group</strong>.</p>
+            <p>Este documento serve como guia técnico para orientar a equipe de engenharia no consumo dos serviços de gerenciamento de usuários, consulta e matrículas em trilhas de aprendizagem. Todos os endpoints mapeados e listados no menu lateral correspondem estritamente aos escopos e fluxos combinados e acordados no documento técnico inicial do projeto.</p>
+            
+            <h2>URL Base (Host)</h2>
+            <p>Para realizar as requisições de teste e homologação do projeto, utilize o seguinte endereço de servidor:</p>
+            
+            <div class="server-url-box">
+                https://api-studion-sescoop.hom.dotgroup.com.br
+            </div>
+
+            <div class="warning-box">
+                <strong>📝 Nota Importante sobre as Rotas:</strong> A URL base descrita acima deve, obrigatoriamente, anteceder de todos os caminhos relativos dos endpoints listados nesta documentação. 
+                <br><br>
+                <em>Exemplo prático:</em> Se o endpoint de autenticação está mapeado como <code>/api/login_check</code>, a requisição final contendo o Host completo deverá ser disparada para:
+                <br>
+                <code>https://api-studion-sescoop.hom.dotgroup.com.br/api/login_check</code>
+            </div>
+
+            <h2>Fluxo de Integração Sugerido</h2>
+            <p>Para um consumo correto e ordenado dos endpoints, recomendamos seguir a seguinte esteira lógica de desenvolvimento:</p>
+            <ul>
+                <li><strong>1. Autenticação:</strong> Realize a chamada enviando as credenciais para obter o Bearer Token (JWT).</li>
+                <li><strong>2. Identificação do Aluno:</strong> Chame o endpoint de <i>Info do Usuário</i> passando o username para capturar o parâmetro <code>uuid</code> interno.</li>
+                <li><strong>3. Execução das Ações:</strong> Utilize o UUID coletado e o Token ativo para matricular o usuário em trilhas, listar históricos ou baixar os certificados correspondentes.</li>
+            </ul>
+        </div>
+
+        <div id="auth" class="section">
+            <h1>Autenticar Usuário</h1>
+            <p>Gera os tokens de acesso (Access Token) e de atualização (Refresh Token) a partir das credenciais do usuário. Este token será necessário para autenticar as requisições nos demais endpoints protegidos da API. <br>Este token JWT resultante será usado para autenticação das chamadas dos próximos endpoints apresentados.</p>
+            
+            <div class="endpoint-url">
+                <span class="method-badge post">POST</span>
+                /api/login_check
+            </div>
+
+            <h2>Cabeçalhos (Headers)</h2>
+            <table>
+                <thead><tr><th>Nome</th><th>Tipo</th><th>Descrição</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><code>Content-Type</code></td>
+                        <td>String</td>
+                        <td><span class="required">Obrigatório.</span> Valor deve ser <code>application/x-www-form-urlencoded</code>.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="warning-box">
+                <strong>⚠️ Atenção:</strong> Certifique-se de enviar os dados no formato <code>x-www-form-urlencoded</code>. Enviar como <code>application/json</code> resultará em erro.
+            </div>
+
+            <h2>Corpo da Requisição</h2>
+            <table>
+                <thead><tr><th>Parâmetro</th><th>Tipo</th><th>Descrição</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><code>_username</code></td>
+                        <td>String</td>
+                        <td><span class="required">Obrigatório.</span> O e-mail de acesso do usuário.</td>
+                    </tr>
+                    <tr>
+                        <td><code>_password</code></td>
+                        <td>String</td>
+                        <td><span class="required">Obrigatório.</span> A senha de acesso do usuário.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Respostas</h2>
+            <h3>200 OK (Sucesso)</h3>
+            <pre><code>{
+    "token": "eyJhbGciOiJSUzI1NiIsInR5...[JWT Omitido]",
+    "refresh_token": "eyJhbGciOiJIUzUxMiIsInR5...[Refresh Token Omitido]"
+}</code></pre>
+        </div>
+
+        <div id="user-info" class="section">
+            <h1>Buscar Usuário por Username</h1>
+            <p>Retorna as informações detalhadas de um usuário cadastrado a partir do seu <code>username</code>.</p>
+            
+            <div class="alert-box">
+                <strong>💡 Nota de Cache:</strong> Os dados de retorno deste endpoint passam por um mecanismo de cache interno com duração de até 1 semana. Alterações muito recentes no cadastro do usuário podem ter um leve atraso de sincronização nesta chamada.
+            </div>
+
+            <div class="warning-box">
+                <strong>🔑 Importante:</strong> Esta requisição retorna o campo <code>uuid</code>. O valor deste campo será obrigatório para realizar a matrícula do usuário em uma trilha.
+            </div>
+
+            <div class="endpoint-url">
+                <span class="method-badge get">GET</span>
+                /api/users/username/{username}
+            </div>
+
+            <h2>Cabeçalhos (Headers)</h2>
+            <table>
+                <thead><tr><th>Nome</th><th>Tipo</th><th>Descrição</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><code>Authorization</code></td>
+                        <td>String</td>
+                        <td><span class="required">Obrigatório.</span> <code>Bearer &lt;seu_token_jwt&gt;</code></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Parâmetros de URL</h2>
+            <table>
+                <thead><tr><th>Parâmetro</th><th>Tipo</th><th>Descrição</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><code>username</code></td>
+                        <td>String</td>
+                        <td><span class="required">Obrigatório.</span> O identificador do usuário (Ex: usuario.validacao).</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Respostas</h2>
+            <h3>200 OK (Sucesso)</h3>
+            <pre><code>{
+    "id": 919555,
+    "active": true,
+    "uuid": "a3a2ecb1-1c5c-4494-9d8a-66905789af09",
+    "profiles": [
+        { "id": 249, "name": "Admin", "alias": "admin" },
+        { "id": 250, "name": "Student", "alias": "student" }
+    ],
+    "meta": {
+        "vinculo_com_o_cooperativismo": 1,
+        "telefone": "11999999999"
+    }
+}</code></pre>
+
+            <h3>404 Not Found</h3>
+            <p>Retornado caso o usuário não exista no banco de dados.</p>
+            <pre><code>{
+    "message": "user_not_found",
+    "code": 404
+}</code></pre>
+        </div>
+
+        <div id="path-info" class="section">
+            <h1>Obter Dados de uma Trilha</h1>
+            <p>Retorna os detalhes de uma trilha de aprendizagem específica. O sistema automaticamente padroniza a carga horária (<code>workload</code>) para ser sempre exibida em <strong>minutos</strong> no retorno, independente de como foi cadastrada.</p>
+            
+            <div class="endpoint-url">
+                <span class="method-badge get">GET</span>
+                /api/paths/{path_id}
+            </div>
+
+            <h2>Cabeçalhos (Headers)</h2>
+            <table>
+                <thead><tr><th>Nome</th><th>Tipo</th><th>Descrição</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><code>Authorization</code></td>
+                        <td>String</td>
+                        <td><span class="required">Obrigatório.</span> <code>Bearer &lt;seu_token_jwt&gt;</code></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Parâmetros de URL & Query</h2>
+            <table>
+                <thead><tr><th>Parâmetro</th><th>Tipo</th><th>Descrição</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><code>path_id</code> (URL)</td>
+                        <td>Integer</td>
+                        <td><span class="required">Obrigatório.</span> O ID numérico da trilha (Ex: 3314).</td>
+                    </tr>
+                    <tr>
+                        <td><code>embed[]</code> (Query)</td>
+                        <td>Array</td>
+                        <td><span class="optional">Opcional.</span> Permite incluir dados extras no retorno. Valores suportados: <code>categories</code>, <code>rating_analysis</code>, <code>user_rating</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><code>applicationUserId</code> (Query)</td>
+                        <td>Integer</td>
+                        <td><span class="optional">Opcional.</span> Obrigatório caso utilize o embed <code>user_rating</code> para obter a avaliação específica de um usuário.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Respostas</h2>
+            <h3>200 OK (Sucesso)</h3>
+            <pre><code>{
+    "id": 3314,
+    "name": "Gestão Orientada por Dados em Cooperativas",
+    "description": "Descubra como transformar dados em decisões...",
+    "duration": "P0Y0M45DT0H0M0S",
+    "isPublished": true,
+    "workload": {
+        "type": "i",
+        "value": 900 // Sempre convertido para minutos pelo sistema
+    },
+    "closedSession": false,
+    "reenrollmentAllowed": true
+}</code></pre>
+
+            <h3>404 Not Found</h3>
+            <pre><code>{
+    "message": "paths_not_found",
+    "code": 404
+}</code></pre>
+        </div>
+
+        <div id="enrollment" class="section">
+            <h1>Matricular Usuário em uma Trilha</h1>
+            <p>Realiza a inscrição de um usuário específico em uma determinada trilha de aprendizagem utilizando o UUID do usuário. Esta requisição possui regras rígidas de negócio validadas antes da efetivação.</p>
+            
+            <div class="endpoint-url">
+                <span class="method-badge post">POST</span>
+                /api/paths/{path_id}/enroll
+            </div>
+
+            <h2>Cabeçalhos (Headers)</h2>
+            <table>
+                <thead><tr><th>Nome</th><th>Tipo</th><th>Descrição</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><code>Content-Type</code></td>
+                        <td>String</td>
+                        <td><span class="required">Obrigatório.</span> <code>application/x-www-form-urlencoded</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>Authorization</code></td>
+                        <td>String</td>
+                        <td><span class="required">Obrigatório.</span> <code>Bearer &lt;seu_token_jwt&gt;</code></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Parâmetros</h2>
+            <table>
+                <thead><tr><th>Parâmetro</th><th>Local</th><th>Descrição</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><code>path_id</code></td>
+                        <td>URL</td>
+                        <td><span class="required">Obrigatório.</span> O ID numérico da trilha (Ex: 367).</td>
+                    </tr>
+                    <tr>
+                        <td><code>uuid</code></td>
+                        <td>Body</td>
+                        <td><span class="required">Obrigatório.</span> O UUID do usuário (obtido no endpoint de Info do Usuário).</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Respostas de Sucesso</h2>
+            <h3>201 Created</h3>
+            <pre><code>{
+    "enrollment_id": 512312,
+    "path_id": 367,
+    "application_user_id": 7545345
+}</code></pre>
+
+            <h2>Regras de Negócio e Erros Mapeados (Domain Violations)</h2>
+            <p>Se a requisição falhar, verifique a mensagem retornada. O sistema previne a matrícula nos seguintes casos:</p>
+            <ul>
+                <li><code>enrollment_process_already_in_progress</code>: Mecanismo de lock do cache. O usuário já tem uma tentativa de matrícula nesta trilha processando nos últimos 10 minutos.</li>
+                <li><code>application_user_not_active</code>: O usuário tentado encontra-se inativo/bloqueado no sistema.</li>
+                <li><code>path_ended</code>: A trilha alvo já foi encerrada e não aceita mais inscrições.</li>
+                <li><code>paths_enrollment_already_exists</code>: O usuário já possui uma matrícula activa nesta mesma trilha.</li>
+                <li><code>user_can_not_permitted_on_this_branch</code> / <code>student_not_permitted_enroll_on_this_branch</code>: Validação de polos. O usuário não pertence à mesma ramificação/polo exigida pela trilha.</li>
+            </ul>
+        </div>
+
+        <div id="list-enrollments" class="section">
+            <h1>Listar Matrículas de uma Trilha</h1>
+            <p>Busca e lista todas as matrículas ativas em uma trilha específica, processando metadados de acesso, permissões de rematrícula e prazos calculados de expiração (deadline).</p>
+            
+            <div class="endpoint-url">
+                <span class="method-badge get">GET</span>
+                /api/paths/{path_id}/enrollments
+            </div>
+
+            <h2>Cabeçalhos (Headers)</h2>
+            <table>
+                <thead><tr><th>Nome</th><th>Tipo</th><th>Descrição</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><code>Authorization</code></td>
+                        <td>String</td>
+                        <td><span class="required">Obrigatório.</span> <code>Bearer &lt;seu_token_jwt&gt;</code></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Parâmetros (Query String)</h2>
+            <p>O endpoint aceita parâmetros padrão de listagem para paginação e filtros:</p>
+            <ul>
+                <li><code>search</code>: Termo de busca livre.</li>
+                <li><code>page</code> e <code>limit</code>: Controle de paginação.</li>
+                <li><code>order</code>: Ordenação de colunas.</li>
+            </ul>
+
+            <h2>Respostas</h2>
+            <h3>200 OK (Sucesso)</h3>
+            <p>O retorno injeta dados computados no momento da listagem, como <code>canReEnroll</code> (calculado baseado nas regras da trilha) e <code>enrollDeadline</code> (baseado no primeiro acesso + duração da trilha).</p>
+            <pre><code>{
+    // Estrutura paginada contendo:
+    "items": [
+        {
+            "id": 512312,
+            "path_id": 367,
+            "application_user_id": 7545345,
+            "name": "Nome do Usuário",
+            "email": "email@usuario.com",
+            "status": {
+                "id": 513,
+                "name": "Aprovado",
+                "alias": "aprovado"
+            },
+            "canReEnroll": false,
+            "enrollDeadline": "2026-12-31T23:59:59+00:00",
+            "certificate_issued_at": "2026-05-19T10:00:00+00:00",
+            "certificate_downloaded_at": null,
+            "groups": []
+        }
+    ]
+}</code></pre>
+        </div>
+
+        <div id="certificate-download" class="section">
+            <h1>Download de Certificado</h1>
+            <p>Realiza o download do arquivo do certificado. Dependendo do <i>style</i> (Trilha, Componente, Sala de Conferência, etc), o sistema busca o histórico de aprovação validando o <code>certificate_hash</code> informado.</p>
+            
+            <div class="endpoint-url">
+                <span class="method-badge get">GET</span>
+                /api/myself/path/certificate/download/{certificate_hash}
+            </div>
+
+            <h2>Cabeçalhos (Headers)</h2>
+            <table>
+                <thead><tr><th>Nome</th><th>Tipo</th><th>Descrição</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><code>Authorization</code></td>
+                        <td>String</td>
+                        <td><span class="required">Obrigatório.</span> <code>Bearer &lt;seu_token_jwt&gt;</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>Accept</code></td>
+                        <td>String</td>
+                        <td><span class="optional">Opcional.</span> É recomendado enviar <code>application/pdf</code>.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Parâmetros de URL</h2>
+            <table>
+                <thead><tr><th>Parâmetro</th><th>Tipo</th><th>Descrição</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><code>certificate_hash</code></td>
+                        <td>String</td>
+                        <td><span class="required">Obrigatório.</span> O hash/UUID de validação único do certificado gerado no momento da conclusão.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Respostas</h2>
+            
+            <h3>200 OK (Sucesso)</h3>
+            <div class="success-box">
+                A requisição retorna o conteúdo binário do documento em <strong>PDF</strong>. Se o integrador estiver utilizando JavaScript (Axios/Fetch), é crucial configurar a resposta do HTTP Client para aceitar BLOB (ex: <code>responseType: 'blob'</code>).
+            </div>
+
+            <h3>404 Not Found</h3>
+            <p>Pode ocorrer caso o hash informado não exista, ou caso a camada de histórico não encontre dados atrelados àquele hash.</p>
+            <pre><code>{
+    "message": "hash_not_found",
+    "code": 404
+}</code></pre>
+
+            <h2>Exemplo cURL</h2>
+            <pre><code>curl --location 'https://api-studion-sescoop.hom.dotgroup.com.br/api/myself/path/certificate/download/574fbb2f-13fa-49b2-b4b8-4cab80165fea' \
+--header 'Accept: application/pdf' \
+--header 'Authorization: Bearer SEU_TOKEN_JWT_AQUI'</code></pre>
+        </div>
+
+    </main>
+
+    <script>
+        function showSection(sectionId) {
+            // Esconder todas as seções
+            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+            
+            // Remover 'active' de todos os itens do menu
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            // Mostrar a seção clicada
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Adicionar 'active' no item do menu clicado
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>
