@@ -167,6 +167,7 @@
         th { background-color: #F8F8F8; color: var(--dot-black); font-weight: 700; font-size: 0.9rem; text-transform: uppercase; }
         
         .required { color: #d9534f; font-weight: bold;}
+        .optional { color: #5bc0de; font-weight: bold;}
 
         pre {
             background-color: var(--code-bg);
@@ -234,7 +235,7 @@
                 <span class="method-badge post">POST</span> Matrícula na Trilha
             </li>
             <li class="nav-item" onclick="showSection('list-enrollments')">
-                <span class="method-badge get">GET</span> Listar Matrículas
+                <span class="method-badge get">GET</span> Buscar Matrícula
             </li>
             <li class="nav-item" onclick="showSection('certificate-download')">
                 <span class="method-badge get">GET</span> Download Certificado
@@ -246,22 +247,22 @@
         
         <div id="intro" class="section active">
             <h1>Visão Geral da Integração</h1>
-            <p>Seja bem-vindo à documentação base de integração entre as plataformas <strong>Plooral</strong> e <strong>Studion.mx</strong> desenvolvido pela <strong>DOT Digital Group</strong>.</p>
+            <p>Seja bem-vindo à documentação base de integração entre as plataformas <strong>Plooral</strong> e <strong>Studion.mx</strong> desenvolvidas pela <strong>DOT Digital Group</strong>.</p>
             <p>Este documento serve como guia técnico para orientar a equipe de engenharia no consumo dos serviços de gerenciamento de usuários, consulta e matrículas em trilhas de aprendizagem. Todos os endpoints mapeados e listados no menu lateral correspondem estritamente aos escopos e fluxos combinados e acordados no documento técnico inicial do projeto.</p>
             
             <h2>URL Base (Host)</h2>
             <p>Para realizar as requisições de teste e homologação do projeto, utilize o seguinte endereço de servidor:</p>
             
             <div class="server-url-box">
-                https://api-studion-sescoop.hom.dotgroup.com.br
+                https://api-studion-sescoop.dotgroup.com.br
             </div>
 
             <div class="warning-box">
-                <strong>📝 Nota Importante sobre as Rotas:</strong> A URL base descrita acima deve, obrigatoriamente, anteceder de todos os caminhos relativos dos endpoints listados nesta documentação. 
+                <strong>📝 Nota Importante sobre as Rotas:</strong> A URL base descrita acima deve, obrigatoriamente, anteceder (ficar antes) de todos os caminhos relativos dos endpoints listados nesta documentação. 
                 <br><br>
                 <em>Exemplo prático:</em> Se o endpoint de autenticação está mapeado como <code>/api/login_check</code>, a requisição final contendo o Host completo deverá ser disparada para:
                 <br>
-                <code>https://api-studion-sescoop.hom.dotgroup.com.br/api/login_check</code>
+                <code>https://api-studion-sescoop.dotgroup.com.br/api/login_check</code>
             </div>
 
             <h2>Fluxo de Integração Sugerido</h2>
@@ -269,13 +270,13 @@
             <ul>
                 <li><strong>1. Autenticação:</strong> Realize a chamada enviando as credenciais para obter o Bearer Token (JWT).</li>
                 <li><strong>2. Identificação do Aluno:</strong> Chame o endpoint de <i>Info do Usuário</i> passando o username para capturar o parâmetro <code>uuid</code> interno.</li>
-                <li><strong>3. Execução das Ações:</strong> Utilize o UUID coletado e o Token ativo para matricular o usuário em trilhas, listar históricos ou baixar os certificados correspondentes.</li>
+                <li><strong>3. Execução das Ações:</strong> Utilize o UUID e E-mail coletados, e o Token ativo para matricular o usuário em trilhas, buscar o status de aprovação ou baixar os certificados correspondentes.</li>
             </ul>
         </div>
 
         <div id="auth" class="section">
             <h1>Autenticar Usuário</h1>
-            <p>Gera os tokens de acesso (Access Token) e de atualização (Refresh Token) a partir das credenciais do usuário. Este token será necessário para autenticar as requisições nos demais endpoints protegidos da API. <br>Este token JWT resultante será usado para autenticação das chamadas dos próximos endpoints apresentados.</p>
+            <p>Gera os tokens de acesso (Access Token) e de atualização (Refresh Token) a partir das credenciais do usuário. Este token será necessário para autenticar as requisições nos demais endpoints protegidos da API.</p>
             
             <div class="endpoint-url">
                 <span class="method-badge post">POST</span>
@@ -511,18 +512,18 @@
                 <li><code>enrollment_process_already_in_progress</code>: Mecanismo de lock do cache. O usuário já tem uma tentativa de matrícula nesta trilha processando nos últimos 10 minutos.</li>
                 <li><code>application_user_not_active</code>: O usuário tentado encontra-se inativo/bloqueado no sistema.</li>
                 <li><code>path_ended</code>: A trilha alvo já foi encerrada e não aceita mais inscrições.</li>
-                <li><code>paths_enrollment_already_exists</code>: O usuário já possui uma matrícula activa nesta mesma trilha.</li>
+                <li><code>paths_enrollment_already_exists</code>: O usuário já possui uma matrícula ativa nesta mesma trilha.</li>
                 <li><code>user_can_not_permitted_on_this_branch</code> / <code>student_not_permitted_enroll_on_this_branch</code>: Validação de polos. O usuário não pertence à mesma ramificação/polo exigida pela trilha.</li>
             </ul>
         </div>
 
         <div id="list-enrollments" class="section">
-            <h1>Listar Matrículas de uma Trilha</h1>
-            <p>Busca e lista todas as matrículas ativas em uma trilha específica, processando metadados de acesso, permissões de rematrícula e prazos calculados de expiração (deadline).</p>
+            <h1>Buscar Matrícula na Trilha</h1>
+            <p>Busca e retorna as informações de matrícula de um usuário específico em uma trilha, processando metadados como status de aprovação, permissões de rematrícula e prazos calculados de expiração (deadline).</p>
             
             <div class="endpoint-url">
                 <span class="method-badge get">GET</span>
-                /api/paths/{path_id}/enrollments
+                /api/paths/{path_id}/enroll?query[email]=usuarioemail@mail.com
             </div>
 
             <h2>Cabeçalhos (Headers)</h2>
@@ -534,29 +535,42 @@
                         <td>String</td>
                         <td><span class="required">Obrigatório.</span> <code>Bearer &lt;seu_token_jwt&gt;</code></td>
                     </tr>
+                    <tr>
+                        <td><code>X-Accept-Version</code></td>
+                        <td>String</td>
+                        <td><span class="required">Obrigatório.</span> Utilize o valor <code>v2</code> para garantir a estrutura correta de retorno da API.</td>
+                    </tr>
                 </tbody>
             </table>
 
-            <h2>Parâmetros (Query String)</h2>
-            <p>O endpoint aceita parâmetros padrão de listagem para paginação e filtros:</p>
-            <ul>
-                <li><code>search</code>: Termo de busca livre.</li>
-                <li><code>page</code> e <code>limit</code>: Controle de paginação.</li>
-                <li><code>order</code>: Ordenação de colunas.</li>
-            </ul>
+            <h2>Parâmetros de URL & Query</h2>
+            <table>
+                <thead><tr><th>Parâmetro</th><th>Tipo</th><th>Descrição</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><code>path_id</code> (URL)</td>
+                        <td>Integer</td>
+                        <td><span class="required">Obrigatório.</span> O ID numérico da trilha consultada (Ex: 3335).</td>
+                    </tr>
+                    <tr>
+                        <td><code>query[email]</code> (Query)</td>
+                        <td>String</td>
+                        <td><span class="required">Obrigatório.</span> O e-mail do aluno para filtrar o registro de matrícula exato. (Ex: <code>usuarioemail@mail.com</code>).</td>
+                    </tr>
+                </tbody>
+            </table>
 
             <h2>Respostas</h2>
             <h3>200 OK (Sucesso)</h3>
-            <p>O retorno injeta dados computados no momento da listagem, como <code>canReEnroll</code> (calculado baseado nas regras da trilha) e <code>enrollDeadline</code> (baseado no primeiro acesso + duração da trilha).</p>
+            <p>O retorno injeta dados computados no momento da busca, como <code>canReEnroll</code> (calculado baseado nas regras da trilha) e <code>enrollDeadline</code> (baseado no primeiro acesso + duração da trilha).</p>
             <pre><code>{
-    // Estrutura paginada contendo:
     "items": [
         {
             "id": 512312,
-            "path_id": 367,
+            "path_id": 3335,
             "application_user_id": 7545345,
-            "name": "Nome do Usuário",
-            "email": "email@usuario.com",
+            "name": "Nome do Aluno",
+            "email": "usuarioemail@mail.com",
             "status": {
                 "id": 513,
                 "name": "Aprovado",
@@ -570,6 +584,12 @@
         }
     ]
 }</code></pre>
+
+            <h2>Exemplo cURL</h2>
+            <pre><code>curl --location --globoff 'https://api-studion-sescoop.dotgroup.com.br/api/paths/3335/enroll?query[email]=mfmiguellis%40hotmail.com' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--header 'Authorization: Bearer SEU_TOKEN_JWT_AQUI' \
+--header 'X-Accept-Version: v2'</code></pre>
         </div>
 
         <div id="certificate-download" class="section">
